@@ -12,6 +12,7 @@ import android.app.PendingIntent
 import androidx.core.content.ContextCompat
 import com.example.jetpackcompose.MainActivity
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.jetpackcompose.R
 import com.example.jetpackcompose.ui.views.dataStore
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
@@ -24,6 +25,7 @@ class PopupService : Service() {
     private var i = 0
     private val dataStore by lazy { applicationContext.dataStore }
     private var isNotificationEnabled: Boolean = false
+    private val channelID = "popup_service_channel"
 
     private val updateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -40,7 +42,13 @@ class PopupService : Service() {
         ////////////////////////////////////
 
         //TODO starte den Service hier
+        val notification: Notification = NotificationCompat.Builder(this, channelID)
+            .setContentTitle("Popup Service")
+            .setContentText("Hello World!")
+            .setSmallIcon(android.R.drawable.ic_dialog_info) // Stelle sicher, dass dieses Icon existiert
+            .build()
 
+        startForeground(1, notification)
         ////////////////////////////////////
 
 
@@ -166,7 +174,7 @@ class PopupService : Service() {
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                "popup_service_channel",
+                channelID,
                 "Popup Service Channel",
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {

@@ -46,6 +46,22 @@ class WeatherViewModel : ViewModel() {
 
         //Todo
 
+        viewModelScope.launch {
+            try {
+                val forecastResponse = WeatherApiService.fetchForecast(city, apiKey)
+
+                if (forecastResponse != null) { // Überprüfe, ob die Antwort nicht null ist
+                    _forecast.value = forecastResponse.list
+                    _errorMessage.value = null
+                } else {
+                    _forecast.value = emptyList() // Setze leere Liste, wenn die Antwort null ist
+                    _errorMessage.value = "Failed to fetch forecast data. Please check your API key or city name."
+                }
+            } catch (e: Exception) {
+                _forecast.value = emptyList()
+                _errorMessage.value = "An error occurred: ${e.localizedMessage}"
+            }
+        }
         ////////////////////////////////////
 
     }
